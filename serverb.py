@@ -15,9 +15,9 @@ nextId=3
 #def index():
 #    return "Hello, World!"
 @app.route('/')
-def getAll():
-    return "hello"
-    
+def getroot():
+    return "hello this is getlippy"
+
 #curl "http://127.0.0.1:5000/acts"
 @app.route('/acts')
 def getAll():
