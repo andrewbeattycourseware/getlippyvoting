@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, redirect
 
 app = Flask(__name__, static_url_path='', static_folder='.')
 
@@ -14,7 +14,9 @@ nextId=3
 
 @app.route('/')
 def index():
-    return "hello this is getlippy"
+    urlRoot=request.url_root
+    
+    return redirect(urlRoot+"vote.html", code=302)
 
 #curl "http://127.0.0.1:5000/acts"
 @app.route('/acts')
@@ -90,6 +92,7 @@ def addVote(actId):
     if not 'votes' in request.json or type(request.json['votes']) is not int:
         abort(401)
     newVotes = request.json['votes']
+    print(newVotes)
 
     foundActs[0]['totalVotes'] += newVotes
 
