@@ -119,7 +119,7 @@ def addVote(actId):
         ',"by":"'+username+'"'+
         ',"time":"'+current_time+'"'+
 
-        '}')
+        '}\n')
     f.close()
 
     return jsonify(foundActs[0])
