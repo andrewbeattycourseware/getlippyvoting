@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, abort, redirect
+from datetime import datetime   
 
 app = Flask(__name__, static_url_path='', static_folder='.')
 
@@ -102,9 +103,24 @@ def addVote(actId):
         abort(401)
     newVotes = request.json['votes']
     print(newVotes)
+    
+
 
     foundActs[0]['totalVotes'] += newVotes
+    f = open("votingLog.txt", "a")
+    username="na"
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
 
+    f.write('{"id":'+str(foundActs[0]['id'])+
+        ',"votes":'+str(newVotes)+
+        ',"total":'+str(foundActs[0]['totalVotes'])+
+        ',"actname":"'+foundActs[0]['actname']+'"'+
+        ',"by":"'+username+'"'+
+        ',"time":"'+current_time+'"'+
+
+        '}')
+    f.close()
 
     return jsonify(foundActs[0])
 
