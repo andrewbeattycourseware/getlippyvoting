@@ -1,0 +1,74 @@
+<html>
+
+<head>
+    <title> view acts</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <h1 align="center">Leader board</h1>
+    <br/>
+    <br/>
+    <div>
+        <table class="table" id="entityTable">
+            <thead class="thead-dark">
+            <tr>
+                <th>Act Name</th>
+                <th>
+                    Votes
+                </th>
+                
+            </tr>
+            </thead>
+
+        </table>
+    </div>
+    
+</body>
+<script>
+    
+    
+    
+    
+    function addactToTable(act) {
+        var tableElement = document.getElementById('entityTable')
+        var rowElement = tableElement.insertRow(-1)
+        rowElement.setAttribute('id', act.id)
+        var cell0 = rowElement.insertCell(0);
+        cell0.innerHTML = "<h4>"+act.actname+"</h4>"
+        var cell1 = rowElement.insertCell(1);
+        cell1.innerHTML = act.totalVotes
+
+    }
+
+    
+    function getAllAjax() {
+        host = window.location.origin
+        $.ajax({
+            "url": host + "/votes/leaderboard",
+            "method": "GET",
+            "data": "",
+            "dataType": "JSON",
+            "success": function (result) {
+                console.log(result);
+                for (act of result) {
+                    addactToTable(act);
+                }
+
+            },
+            "error": function (xhr, status, error) {
+                console.log("error: " + status + " msg:" + error);
+            }
+        });
+
+    }
+    getAllAjax();
+
+
+
+</script>
+
+</html>
