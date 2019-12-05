@@ -46,6 +46,30 @@ def create():
     acts.append(act)
     return jsonify(act)
 
+@app.route('/acts/<int:id>' , methods=['PUT'])
+def update(id):
+    foundActs = list(filter(lambda t: t['id']== id, acts))
+    if (len(foundActs) == 0):
+        abort(404)
+    if not request.json:
+        abort(400)
+    reqJson = request.json
+    foundAct = foundActs[0]
+    
+    if 'actname' in reqJson:
+        foundAct['actname'] = reqJson['actname']
+
+    if 'totalVotes' in reqJson and type(reqJson['totalVotes']) is not int:
+        abort(401) 
+    if 'totalVotes' in reqJson:
+        foundAct['totalVotes'] = reqJson['totalVotes']
+    return jsonify(foundAct)
+
+
+    
+    return jsonify({"done":True})
+
+
 
 
 @app.route('/acts/<int:id>' , methods=['DELETE'])
