@@ -16,7 +16,7 @@
     <div>
         <table class="table" id="entityTable">
             <tr>
-                <th>id</th>
+                <th></th>
                 <th>actname</th>
                 <th>
                     votes
@@ -105,7 +105,7 @@
         var rowElement = tableElement.insertRow(-1)
         rowElement.setAttribute('id', act.id)
         var cell0 = rowElement.insertCell(0);
-        cell0.innerHTML = act.id
+        //cell0.innerHTML = act.id
         var cell1 = rowElement.insertCell(1);
         cell1.innerHTML = act.actname
       
@@ -134,7 +134,7 @@
         return act
     }
     function setactInRow(rowElement, act) {
-        rowElement.cells[0].firstChild.textContent = act.id
+        //rowElement.cells[0].firstChild.textContent = act.id
         rowElement.cells[1].firstChild.textContent = act.actname
         
         rowElement.cells[2].firstChild.textContent = act.totalVotes
