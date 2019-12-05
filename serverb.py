@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, request, abort, redirect
+from flask import Flask, jsonify, request, abort, redirect, session,url_for
 from datetime import datetime   
 
 app = Flask(__name__, static_url_path='', static_folder='.')
+app.secret_key = 'getLippyStuffasdjfhasdkljfhjklh'
 
 acts=[
     { "id": 1, "actname":"Angel Abbey", "totalVotes":0}, 
@@ -22,11 +23,17 @@ nextId=3
 #app = Flask(__name__)
 
 
-@app.route('/')
-def index():
+@app.route('/vote')
+def voting():
     urlRoot=request.url_root
     
     return redirect(urlRoot+"vote.html", code=302)
+
+@app.route('/')
+def welcome():
+    urlRoot=request.url_root
+    
+    return redirect(urlRoot+"welcome.html", code=302)
 
 #curl "http://127.0.0.1:5000/acts"
 @app.route('/acts')
@@ -108,7 +115,9 @@ def addVote(actId):
 
     foundActs[0]['totalVotes'] += newVotes
     f = open("votingLog.txt", "a")
-    username="na"
+    username = "not set"
+    if 'username' in session:
+        username = session['username']
     now = datetime.now()
     current_time = now.strftime("%H:%M:%S")
 
@@ -131,6 +140,18 @@ def getleaderBoard():
 
     return jsonify(acts)
 
+@app.route('/login', methods=['POST'])
+def login():
+    if request.method == 'POST':
+        session['username'] = request.form['username']
+        return redirect(url_for('voting'))
+    return ''
+
+@app.route('/getusername', methods=['GET'])
+def getusername():
+    if 'username' in session:
+        return session['username']
+    return "username not set"
 
 if __name__ == '__main__' :
     app.run(debug= True)

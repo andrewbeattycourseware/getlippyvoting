@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title> view acts</title>
+    <title> Voting</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -17,6 +17,7 @@
 
 <body>
 <h1> Voting page</h1>
+<h4> welcome <span class="username"></span></h4>
 <ol>
     <li>Click on the act you want to add votes to</li>
     <li>Select the number of votes you want to add</li>
@@ -58,7 +59,7 @@
 <script src="./src/bootstrap-input-spinner.js"></script>
 <script>
     $(document).ready(function () {
-        
+        setusername()
         populatePage()
     })
     function init(){
@@ -128,6 +129,21 @@
         //console.log(templateCard);
         $('#voteForAct').append(templateCard);
 
+    }
+    function setusername(){
+        host = window.location.origin
+        $.ajax({
+            "url": host + "/getusername",
+            "method": "GET",
+            "data": "",
+            "dataType": "html",
+            "success": function (result) {
+                $('.username').html(result)
+            },
+            "error": function (xhr, status, error) {
+                console.log("error: " + status + " msg:" + error);
+            }
+        });
     }
     
 
