@@ -10,7 +10,7 @@
 
 <body>
     <h1>acts</h1>
-    <div> <button id="showCreateButton" onclick="showCreate()">Create</button></div>
+    <div> <button id="showCreateButton" onclick="showCreate()" class="btn btn-primary">Create</button></div>
     <div>
         <table class="table" id="entityTable">
             <tr>
@@ -30,8 +30,8 @@
         <input type="hidden" name="id" />
         actname <input type="text" name="actname" /><br />        
         totalVotes <input type="number" name="totalVotes" /> <br />
-        <span><button id="doCreateButton" onclick="doCreate()">Create</button></span>
-        <span><button id="doUpdateButton" onclick="doUpdate()">Update</button></span>
+        <span><button id="doCreateButton" onclick="doCreate()" class="btn btn-primary">Create</button></span>
+        <span><button id="doUpdateButton" onclick="doUpdate()" class="btn btn-primary">Update</button></span>
     </div>
 </body>
 <script>
@@ -110,9 +110,9 @@
         var cell2 = rowElement.insertCell(2);
         cell2.innerHTML = act.totalVotes
         var cell3 = rowElement.insertCell(3);
-        cell3.innerHTML = '<button onclick="showUpdate(this)">Update</button>'
+        cell3.innerHTML = '<button onclick="showUpdate(this)" class="btn btn-primary">Update</button>'
         var cell4 = rowElement.insertCell(4);
-        cell4.innerHTML = '<button onclick=doDelete(this)>delete</button>'
+        cell4.innerHTML = '<button onclick=doDelete(this) class="btn btn-danger">delete</button>'
 
     }
 
