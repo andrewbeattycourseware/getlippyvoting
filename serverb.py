@@ -1,10 +1,11 @@
 from flask import Flask, jsonify, request, abort, redirect, session,url_for
 from datetime import datetime   
+import pickle
 
 app = Flask(__name__, static_url_path='', static_folder='.')
 app.secret_key = 'getLippyStuffasdjfhasdkljfhjklh'
 
-acts=[
+actsold=[
     { "id": 1, "actname":"Angel Abbey", "totalVotes":0}, 
     { "id": 2, "actname":"Daniel & Shona", "totalVotes":0}, 
     { "id": 3, "actname":"Catherina Roynane", "totalVotes":0}, 
@@ -19,8 +20,15 @@ acts=[
 ]
 
 
-nextId=3
+nextId=21
 #app = Flask(__name__)
+
+@app.route('/init')
+def init():
+    writeActsFromFile(actsold)
+    
+    return "done"
+
 
 
 @app.route('/vote')
@@ -38,11 +46,13 @@ def welcome():
 #curl "http://127.0.0.1:5000/acts"
 @app.route('/acts')
 def getAll():
+    acts= readActsFromFile()
     return jsonify(acts)
 
 #curl "http://127.0.0.1:5000/acts/2"
 @app.route('/acts/<int:id>')
 def findById(id):
+    acts= readActsFromFile()
     foundActs = list(filter(lambda t: t['id'] == id, acts))
     if len(foundActs) == 0:
         return jsonify ({}) , 204
@@ -62,11 +72,14 @@ def create():
         "totalVotes":0
     }
     nextId += 1
+    acts= readActsFromFile()
     acts.append(act)
+    writeActsFromFile(acts)
     return jsonify(act)
 
 @app.route('/acts/<int:id>' , methods=['PUT'])
 def update(id):
+    acts= readActsFromFile()
     foundActs = list(filter(lambda t: t['id']== id, acts))
     if (len(foundActs) == 0):
         abort(404)
@@ -82,25 +95,29 @@ def update(id):
         abort(401) 
     if 'totalVotes' in reqJson:
         foundAct['totalVotes'] = reqJson['totalVotes']
+    writeActsFromFile(acts)
     return jsonify(foundAct)
 
 
     
-    return jsonify({"done":True})
+    
 
 
 
 
 @app.route('/acts/<int:id>' , methods=['DELETE'])
 def delete(id):
+    acts= readActsFromFile()
     foundActs = list(filter(lambda t: t['id']== id, acts))
     if (len(foundActs) == 0):
         abort(404)
     acts.remove(foundActs[0])
+    writeActsFromFile(acts)
     return jsonify({"done":True})
 
 @app.route('/votes/<int:actId>', methods = ['POST'])
 def addVote(actId):
+    acts= readActsFromFile()
     foundActs=list(filter(lambda t : t['id']==actId, acts))
     if len(foundActs)== 0:
         abort(404)
@@ -109,11 +126,14 @@ def addVote(actId):
     if not 'votes' in request.json or type(request.json['votes']) is not int:
         abort(401)
     newVotes = request.json['votes']
+    foundActs[0]['totalVotes'] += newVotes
+    writeActsFromFile(acts)
+    print(acts)
     print(newVotes)
     
 
 
-    foundActs[0]['totalVotes'] += newVotes
+    
     f = open("votingLog.txt", "a")
     username = "not set"
     if 'username' in session:
@@ -135,6 +155,7 @@ def addVote(actId):
 
 @app.route('/votes/leaderboard')
 def getleaderBoard():
+    acts= readActsFromFile()
 #ut.sort(key=lambda x: x.count, reverse=True)
     acts.sort(key=lambda x: x['totalVotes'], reverse=True)
 
@@ -152,6 +173,21 @@ def getusername():
     if 'username' in session:
         return session['username']
     return "username not set"
+
+def readActsFromFile():
+    with open('listfile.data', 'rb') as filehandle:
+    # read the data as binary data stream
+        acts = pickle.load(filehandle)
+    return acts
+
+
+def writeActsFromFile(acts):
+    with open('listfile.data', 'wb') as filehandle:
+        # store the data as binary data stream
+        pickle.dump(acts, filehandle)
+
+
+
 
 if __name__ == '__main__' :
     app.run(debug= True)
