@@ -3,19 +3,17 @@ from flask import Flask, jsonify, request, abort
 app = Flask(__name__, static_url_path='', static_folder='.')
 
 acts=[
-    { "id": 1, "name":"joe", "totalVotes":4}, 
-    { "id": 2, "name":"joe2", "totalVotes":5}, 
+    { "id": 1, "actname":"joe", "totalVotes":4}, 
+    { "id": 2, "actname":"joe2", "totalVotes":5}, 
 ]
 
 
 nextId=3
 #app = Flask(__name__)
 
-#@app.route('/')
-#def index():
-#    return "Hello, World!"
+
 @app.route('/')
-def getroot():
+def index():
     return "hello this is getlippy"
 
 #curl "http://127.0.0.1:5000/acts"
@@ -41,7 +39,7 @@ def create():
     # other checking 
     act = {
         "id": nextId,
-        "name": request.json['name'],
+        "actname": request.json['actname'],
         "totalVotes":0
     }
     nextId += 1

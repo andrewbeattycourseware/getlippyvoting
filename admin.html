@@ -1,1 +1,245 @@
-admin
+<html>
+
+<head>
+    <title> view acts</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <h1>acts</h1>
+    <div> <button id="showCreateButton" onclick="showCreate()">Create</button></div>
+    <div>
+        <table class="table" id="entityTable">
+            <tr>
+                <th>id</th>
+                <th>actname</th>
+                <th>
+                    votes
+                </th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+
+        </table>
+    </div>
+    <div id='createUpdateForm' style="display: none">
+        <h2><span id="createLabel">Create a</span> <span id="updateLabel">update</span> act</h2>
+        <input type="hidden" name="id" />
+        actname <input type="text" name="actname" /><br />        
+        totalVotes <input type="number" name="totalVotes" /> <br />
+        <span><button id="doCreateButton" onclick="doCreate()">Create</button></span>
+        <span><button id="doUpdateButton" onclick="doUpdate()">Update</button></span>
+    </div>
+</body>
+<script>
+    function showCreate() {
+        document.getElementById('showCreateButton').style.display = "none"
+        document.getElementById('entityTable').style.display = "none"
+        document.getElementById('createUpdateForm').style.display = "block"
+
+        document.getElementById('createLabel').style.display = "inline"
+        document.getElementById('updateLabel').style.display = "none"
+
+        document.getElementById('doCreateButton').style.display = "block"
+        document.getElementById('doUpdateButton').style.display = "none"
+
+    }
+    function showViewAll() {
+        document.getElementById('showCreateButton').style.display = "block"
+        document.getElementById('entityTable').style.display = "block"
+        document.getElementById('createUpdateForm').style.display = "none"
+    }
+    function showUpdate(buttonElement) {
+        document.getElementById('showCreateButton').style.display = "none"
+        document.getElementById('entityTable').style.display = "none"
+        document.getElementById('createUpdateForm').style.display = "block"
+
+        document.getElementById('createLabel').style.display = "none"
+        document.getElementById('updateLabel').style.display = "inline"
+
+        document.getElementById('doCreateButton').style.display = "none"
+        document.getElementById('doUpdateButton').style.display = "block"
+
+
+        var rowElement = buttonElement.parentNode.parentNode
+        // these is a way of finding the closest <tr> which would safer, closest()
+
+        var act = getactFromRow(rowElement)
+        populateFormWithact(act)
+    }
+    function doCreate() {
+        var form = document.getElementById('createUpdateForm')
+
+        var act = {}
+
+        act.actname = form.querySelector('input[name="actname"]').value
+        act.totalVotes = form.querySelector('input[name="totalVotes"]').value
+        console.log(JSON.stringify(act))
+        createactAjax(act)
+
+
+    }
+    function doUpdate() {
+        var act = getactFromForm();
+        var rowElement = document.getElementById(act.id);
+        updateactAjax(act);
+        setactInRow(rowElement, act);
+
+        clearForm();
+        showViewAll();
+    }
+    function doDelete(r) {
+        var tableElement = document.getElementById('entityTable');
+        var rowElement = r.parentNode.parentNode;
+        var index = rowElement.rowIndex;
+        deleteactAjax(rowElement.getAttribute("id"));
+        tableElement.deleteRow(index);
+    }
+    function addactToTable(act) {
+        var tableElement = document.getElementById('entityTable')
+        var rowElement = tableElement.insertRow(-1)
+        rowElement.setAttribute('id', act.id)
+        var cell0 = rowElement.insertCell(0);
+        cell0.innerHTML = act.id
+        var cell1 = rowElement.insertCell(1);
+        cell1.innerHTML = act.actname
+      
+        var cell2 = rowElement.insertCell(2);
+        cell2.innerHTML = act.totalVotes
+        var cell3 = rowElement.insertCell(3);
+        cell3.innerHTML = '<button onclick="showUpdate(this)">Update</button>'
+        var cell4 = rowElement.insertCell(4);
+        cell4.innerHTML = '<button onclick=doDelete(this)>delete</button>'
+
+    }
+
+    function clearForm() {
+        var form = document.getElementById('createUpdateForm')
+
+        form.querySelector('input[name="actname"]').value = ''
+        
+        form.querySelector('input[name="totalVotes"]').value = ''
+    }
+    function getactFromRow(rowElement) {
+        var car = {}
+        act.id = rowElement.getAttribute('id')
+        act.actname = rowElement.cells[1].firstChild.textContent
+        
+        act.totalVotes = parseInt(rowElement.cells[2].firstChild.textContent, 10)
+        return act
+    }
+    function setactInRow(rowElement, act) {
+        rowElement.cells[0].firstChild.textContent = act.id
+        rowElement.cells[1].firstChild.textContent = act.actname
+        
+        rowElement.cells[2].firstChild.textContent = act.totalVotes
+    }
+    function populateFormWithact(act) {
+        var form = document.getElementById('createUpdateForm')
+        form.querySelector('input[name="id"]').disabled = true
+
+        form.querySelector('input[name="id"]').value = act.id
+        form.querySelector('input[name="actname"]').value = act.actname
+        
+        form.querySelector('input[name="totalVotes"]').value = act.totalVotes
+        return act
+    }
+    function getactFromForm() {
+        var form = document.getElementById('createUpdateForm')
+        var act = {}
+        act.id = form.querySelector('input[name="id"]').value
+        act.actname = form.querySelector('input[name="actname"]').value
+        act.totalVotes = parseInt(form.querySelector('input[name="totalVotes"]').value, 10)
+        console.log(JSON.stringify(act))
+        return act
+    }
+    function getAllAjax() {
+        host = window.location.origin
+        $.ajax({
+            "url": host + "/acts",
+            "method": "GET",
+            "data": "",
+            "dataType": "JSON",
+            "success": function (result) {
+                console.log(result);
+                for (act of result) {
+                    addactToTable(act);
+                }
+
+            },
+            "error": function (xhr, status, error) {
+                console.log("error: " + status + " msg:" + error);
+            }
+        });
+
+    }
+    function createactAjax(act) {
+        host = window.location.origin
+        //var car = {"id":"12 D 1234","make":"Fiat","model":"Punto","totalVotes":3000}
+        console.log(JSON.stringify(act));
+        $.ajax({
+            "url": host + "/acts",
+            "method": "POST",
+            "data": JSON.stringify(act),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success": function (result) {
+                console.log(result);
+                act.id = result.id
+                addactToTable(act)
+                clearForm()
+                showViewAll()
+            },
+            "error": function (xhr, status, error) {
+                console.log("error: " + status + " msg:" + error);
+            }
+        });
+    }
+    function updateactAjax(act) {
+        host = window.location.origin
+        //var car = {"id":"1","totalVotes":8000}
+        console.log(JSON.stringify(act));
+        $.ajax({
+            "url": host + "/acts/" + encodeURI(act.id),
+            "method": "PUT",
+            "data": JSON.stringify(act),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success": function (result) {
+                // console.log(result);
+
+            },
+            "error": function (xhr, status, error) {
+                console.log("error: " + status + " msg:" + error);
+            }
+        });
+    }
+    function deleteactAjax(id) {
+        host = window.location.origin
+
+        //console.log(JSON.stringify('deleting '+id));
+        $.ajax({
+            "url": host + "/acts/" + encodeURI(id),
+            "method": "DELETE",
+            "data": "",
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success": function (result) {
+                //console.log(result);
+
+            },
+            "error": function (xhr, status, error) {
+                console.log("error: " + status + " msg:" + error);
+            }
+        });
+    }
+    getAllAjax();
+
+
+
+</script>
+
+</html>
