@@ -3,8 +3,17 @@ from flask import Flask, jsonify, request, abort, redirect
 app = Flask(__name__, static_url_path='', static_folder='.')
 
 acts=[
-    { "id": 1, "actname":"joe", "totalVotes":4}, 
-    { "id": 2, "actname":"joe2", "totalVotes":5}, 
+    { "id": 1, "actname":"Angel Abbey", "totalVotes":0}, 
+    { "id": 2, "actname":"Daniel & Shona", "totalVotes":0}, 
+    { "id": 3, "actname":"Catherina Roynane", "totalVotes":0}, 
+    { "id": 4, "actname":"Gary Tobin and Crew", "totalVotes":0}, 
+    { "id": 5, "actname":"John Gately", "totalVotes":0}, 
+    { "id": 6, "actname":"Kelsea & Siobhan", "totalVotes":0}, 
+    { "id": 7, "actname":"Ladies GAA", "totalVotes":0}, 
+    { "id": 8, "actname":"Nigel Jennings & Kelsea", "totalVotes":0}, 
+    { "id": 9, "actname":"Teresa & Maura", "totalVotes":0}, 
+    { "id": 10, "actname":"Year 3 Social Care", "totalVotes":0}, 
+    { "id": 11, "actname":"1st Year Outdoor Shane Halley", "totalVotes":0}, 
 ]
 
 
